@@ -18,7 +18,7 @@ namespace Catalogo.Controllers
         {
             _context = context;
         }
-
+        
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> Get()
         {

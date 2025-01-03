@@ -18,6 +18,10 @@ namespace Catalogo.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Deletes a specific TodoItem.
+        /// </summary>
+
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> get() {
           
