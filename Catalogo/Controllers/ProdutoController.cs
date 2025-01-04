@@ -18,11 +18,17 @@ namespace Catalogo.Controllers
         {
             _context = context;
         }
-        
+
+
+        //comentarios em xml
+
+        /// <summary>
+        /// Retorna os itens.
+        /// </summary>
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> Get()
         {
-            var produtos = _context.Produtos.ToList();
+            var produtos = _context.Produtos.AsNoTracking().Take(10).ToList();
 
 
             if (produtos is null) return NotFound();
@@ -30,6 +36,10 @@ namespace Catalogo.Controllers
             return produtos;
         }
 
+        /// <summary>
+        /// retorna elemento pelo id
+        /// </summary>
+        //metodo que ira retornar pelo Id
         [HttpGet("{id:int}", Name = "obterproduto")]
         public ActionResult<Produto> Get(int id)
         {
@@ -39,6 +49,11 @@ namespace Catalogo.Controllers
 
             return produto;
         }
+
+        /// <summary>
+        /// adciona um novo elemento
+        /// </summary>
+        /// <returns></returns>
 
         [HttpPost]
         public ActionResult Post(Produto produto)
@@ -53,7 +68,10 @@ namespace Catalogo.Controllers
             return new CreatedAtRouteResult("obterproduto", new { id = produto.ProdutoId }, produto);
         }
 
-
+        /// <summary>
+        /// altera a informação
+        /// </summary>
+        /// <returns></returns>
         [HttpPut("{id:int}")]
         public ActionResult Put(int id, Produto produto)
         {
@@ -64,7 +82,9 @@ namespace Catalogo.Controllers
             return Ok(produto);
         }
 
-
+        /// <summary>
+        /// Deleta o elemento selecionado
+        /// </summary>
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id) {
 

@@ -18,17 +18,25 @@ namespace Catalogo.Controllers
             _context = context;
         }
 
+        //comentarios em xml
+
         /// <summary>
-        /// Deletes a specific TodoItem.
+        /// Retorna os itens.
         /// </summary>
 
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> get() {
           
-            return _context.Categorias.ToList();
+            return _context.Categorias.AsNoTracking().Take(10).ToList();
+            //AsNoTracking evita a sobrecarga, deixando a consulta otimizada
+            //Take ira limitar a consulta apenas com os 10 primeiros
 
         }
 
+        /// <summary>
+        /// retorna elemento pelo id
+        /// </summary>
+        //metodo que ira retornar pelo Id
         [HttpGet("{id:int}",Name = "categoria")]
         public ActionResult Get(int id) {
             var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
@@ -38,14 +46,23 @@ namespace Catalogo.Controllers
            return Ok(categoria);
         }
 
+        /// <summary>
+        /// retorna elementos relacionados
+        /// </summary>
+        //metodo que ira retornar produtos relacionados
         [HttpGet]
         [Route("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriaProdutos()
         {
-            return _context.Categorias.Include(p => p.Produtos).ToList();
-        }
-            
+            return _context.Categorias.Include(p => p.Produtos).Where(p => p.CategoriaId < 5).ToList();
+            //o where limita a consulta para evitar uma grande quantidade de dados retornado.
 
+        }
+
+/// <summary>
+/// adciona um novo elemento
+/// </summary>
+/// <returns></returns>
         [HttpPost]
         public ActionResult<Categoria> post(Categoria categoria)
         {
@@ -57,18 +74,26 @@ namespace Catalogo.Controllers
             return new CreatedAtRouteResult("categoria",new {id =  categoria.CategoriaId},categoria);
         }
 
+        /// <summary>
+        /// altera a informação
+        /// </summary>
+        /// <returns></returns>
+
         [HttpPut("{id:int}")]
-        public ActionResult<Categoria> put (int id,Categoria categoria)
+        public ActionResult<Categoria> Put (int id,Categoria categoria)
         {
             if (id != categoria.CategoriaId) return BadRequest();
-
+            
+            //entry modifica o elemento selecionado e o state recebe o modo modified q avisa q esta sendo modificado
             _context.Entry(categoria).State = EntityState.Modified;
             _context.SaveChanges();
 
             return Ok(categoria);
         }
 
-
+        /// <summary>
+        /// Deleta o elemento selecionado
+        /// </summary>
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
