@@ -25,11 +25,21 @@ namespace Catalogo.Controllers
         /// </summary>
 
         [HttpGet]
-        public ActionResult<IEnumerable<Categoria>> get() {
-          
-            return _context.Categorias.AsNoTracking().Take(10).ToList();
-            //AsNoTracking evita a sobrecarga, deixando a consulta otimizada
-            //Take ira limitar a consulta apenas com os 10 primeiros
+        public ActionResult<IEnumerable<Categoria>> get()
+        {
+            try
+            {
+                throw new Exception();
+                //return _context.Categorias.AsNoTracking().Take(10).ToList();
+                //AsNoTracking evita a sobrecarga, deixando a consulta otimizada
+                //Take ira limitar a consulta apenas com os 10 primeiros
+
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+            }
 
         }
 
@@ -37,13 +47,26 @@ namespace Catalogo.Controllers
         /// retorna elemento pelo id
         /// </summary>
         //metodo que ira retornar pelo Id
-        [HttpGet("{id:int}",Name = "categoria")]
-        public ActionResult Get(int id) {
-            var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+        [HttpGet("{id:int}", Name = "categoria")]
+        public ActionResult Get(int id)
+        {
 
-            if (categoria is null) return NotFound("n encontrou");
+            try
+            {
+                var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
 
-           return Ok(categoria);
+                if (categoria is null) return NotFound("n encontrou");
+                return Ok(categoria);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+                //tratando erro com a classe statuscode
+            }
+
+
+
         }
 
         /// <summary>
@@ -54,24 +77,44 @@ namespace Catalogo.Controllers
         [Route("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriaProdutos()
         {
-            return _context.Categorias.Include(p => p.Produtos).Where(p => p.CategoriaId < 5).ToList();
-            //o where limita a consulta para evitar uma grande quantidade de dados retornado.
+            try
+            {
+                return _context.Categorias.Include(p => p.Produtos).Where(p => p.CategoriaId < 5).ToList();
+                //o where limita a consulta para evitar uma grande quantidade de dados retornado.
+
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+
+            }
 
         }
 
-/// <summary>
-/// adciona um novo elemento
-/// </summary>
-/// <returns></returns>
+        /// <summary>
+        /// adciona um novo elemento
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult<Categoria> post(Categoria categoria)
         {
-            if (categoria is null) return BadRequest("tem erro ai");
+            try
+            {
+                if (categoria is null) return BadRequest("tem erro ai");
 
-            _context.Categorias.Add(categoria);
-            _context.SaveChanges();
+                _context.Categorias.Add(categoria);
+                _context.SaveChanges();
 
-            return new CreatedAtRouteResult("categoria",new {id =  categoria.CategoriaId},categoria);
+                return new CreatedAtRouteResult("categoria", new { id = categoria.CategoriaId }, categoria);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+
+            }
+
         }
 
         /// <summary>
@@ -80,15 +123,25 @@ namespace Catalogo.Controllers
         /// <returns></returns>
 
         [HttpPut("{id:int}")]
-        public ActionResult<Categoria> Put (int id,Categoria categoria)
+        public ActionResult<Categoria> Put(int id, Categoria categoria)
         {
-            if (id != categoria.CategoriaId) return BadRequest();
-            
-            //entry modifica o elemento selecionado e o state recebe o modo modified q avisa q esta sendo modificado
-            _context.Entry(categoria).State = EntityState.Modified;
-            _context.SaveChanges();
+            try
+            {
+                if (id != categoria.CategoriaId) return BadRequest();
 
-            return Ok(categoria);
+                //entry modifica o elemento selecionado e o state recebe o modo modified q avisa q esta sendo modificado
+                _context.Entry(categoria).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                return Ok(categoria);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+
+            }
+
         }
 
         /// <summary>
@@ -97,13 +150,21 @@ namespace Catalogo.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
+            try
+            {
+                var categoria = _context.Categorias.FirstOrDefault(p => id == p.CategoriaId);
+                if (categoria is null) return NotFound("produto n encontrado");
 
-            var categoria = _context.Categorias.FirstOrDefault(p => id == p.CategoriaId);
-            if (categoria is null) return NotFound("produto n encontrado");
+                _context.Categorias.Remove(categoria);
+                _context.SaveChanges();
+                return Ok(categoria);
 
-            _context.Categorias.Remove(categoria);
-            _context.SaveChanges();
-            return Ok(categoria);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+            }
 
 
         }

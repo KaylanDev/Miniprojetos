@@ -28,12 +28,22 @@ namespace Catalogo.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> Get()
         {
-            var produtos = _context.Produtos.AsNoTracking().Take(10).ToList();
+            try
+            {
+                var produtos = _context.Produtos.AsNoTracking().Take(10).ToList();
 
 
-            if (produtos is null) return NotFound();
+                if (produtos is null) return NotFound();
 
-            return produtos;
+                return produtos;
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+
+            }
+
         }
 
         /// <summary>
@@ -43,11 +53,20 @@ namespace Catalogo.Controllers
         [HttpGet("{id:int}", Name = "obterproduto")]
         public ActionResult<Produto> Get(int id)
         {
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-            if (produto is null) return NotFound("O produto n existe!");
+            try
+            {
+                var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+                if (produto is null) return NotFound("O produto n existe!");
 
 
-            return produto;
+                return produto;
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+            }
+
         }
 
         /// <summary>
@@ -58,14 +77,18 @@ namespace Catalogo.Controllers
         [HttpPost]
         public ActionResult Post(Produto produto)
         {
+            try
+            {
+                if (produto is null) return BadRequest();
+                _context.Produtos.Add(produto);
+                _context.SaveChanges();
+                return new CreatedAtRouteResult("obterproduto", new { id = produto.ProdutoId }, produto);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+            }
 
-            if (produto is null) return BadRequest();
-            _context.Produtos.Add(produto);
-            _context.SaveChanges();
-
-
-
-            return new CreatedAtRouteResult("obterproduto", new { id = produto.ProdutoId }, produto);
         }
 
         /// <summary>
@@ -75,27 +98,41 @@ namespace Catalogo.Controllers
         [HttpPut("{id:int}")]
         public ActionResult Put(int id, Produto produto)
         {
-            if (id != produto.ProdutoId) return BadRequest();
+            try
+            {
+                if (id != produto.ProdutoId) return BadRequest();
 
-            _context.Entry(produto).State = EntityState.Modified;
-            _context.SaveChanges();
-            return Ok(produto);
+                _context.Entry(produto).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok(produto);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+
+            }
         }
 
         /// <summary>
         /// Deleta o elemento selecionado
         /// </summary>
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id) {
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                var produto = _context.Produtos.FirstOrDefault(p => id == p.ProdutoId);
+                if (produto is null) return NotFound("produto n encontrado");
 
-            var produto = _context.Produtos.FirstOrDefault(p => id == p.ProdutoId);
-            if (produto is null) return NotFound("produto n encontrado");
-
-            _context.Produtos.Remove(produto);
-            _context.SaveChanges();
-            return Ok(produto);
-        
-        
+                _context.Produtos.Remove(produto);
+                _context.SaveChanges();
+                return Ok(produto);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro interno");
+            }
         }
     }
 }
