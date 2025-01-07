@@ -25,12 +25,11 @@ namespace Catalogo.Controllers
         /// </summary>
 
         [HttpGet]
-        public ActionResult<IEnumerable<Categoria>> get()
+        public async Task<ActionResult<IEnumerable<Categoria>>> GetAsync()
         {
             try
             {
-                throw new Exception();
-                //return _context.Categorias.AsNoTracking().Take(10).ToList();
+                return await _context.Categorias.AsNoTracking().Take(10).ToListAsync();
                 //AsNoTracking evita a sobrecarga, deixando a consulta otimizada
                 //Take ira limitar a consulta apenas com os 10 primeiros
 
@@ -75,11 +74,11 @@ namespace Catalogo.Controllers
         //metodo que ira retornar produtos relacionados
         [HttpGet]
         [Route("produtos")]
-        public ActionResult<IEnumerable<Categoria>> GetCategoriaProdutos()
+        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriaProdutos()
         {
             try
             {
-                return _context.Categorias.Include(p => p.Produtos).Where(p => p.CategoriaId < 5).ToList();
+                return await _context.Categorias.Include(p => p.Produtos).Where(p => p.CategoriaId < 5).ToListAsync();
                 //o where limita a consulta para evitar uma grande quantidade de dados retornado.
 
             }
