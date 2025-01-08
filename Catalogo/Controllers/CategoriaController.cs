@@ -1,7 +1,9 @@
 ﻿using Catalogo.Data;
 using Catalogo.Models;
+using Catalogo.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Collections;
 using System.Reflection.Metadata.Ecma335;
 
@@ -18,8 +20,19 @@ namespace Catalogo.Controllers
             _context = context;
         }
 
-        //comentarios em xml
+        [HttpGet("ComFromService/{nome}")]
+        public ActionResult<string> GetComFrom(string nome,[FromServices]IMeuService service)
+        {
+            return service.BemVindo(nome);
+        }
 
+        [HttpGet("SemFromService/{nome}")]
+        public ActionResult<string> GetSemFrom(string nome, IMeuService service)
+        {
+            return service.BemVindo(nome);
+        }
+                
+        //comentarios em xml
         /// <summary>
         /// Retorna os itens.
         /// </summary>

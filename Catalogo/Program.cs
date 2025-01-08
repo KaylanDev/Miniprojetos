@@ -5,6 +5,8 @@ using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 using System.Reflection;
+using Catalogo.Services;
+using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -37,6 +39,14 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
+//adciona o tempo de vida do objeto
+builder.Services.AddTransient<IMeuService, MeuSevico>();
+
+//desabilita o fromservice
+builder.Services.Configure<ApiBehaviorOptions>(options => 
+options.DisableImplicitFromServicesParameters = true
+);
 
 string? mysqlconectio = builder.Configuration.GetConnectionString("Conexao");
 
