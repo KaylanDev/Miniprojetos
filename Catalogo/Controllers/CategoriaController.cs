@@ -19,7 +19,7 @@ namespace Catalogo.Controllers
         {
             _context = context;
         }
-
+        /*
         [HttpGet("ComFromService/{nome}")]
         public ActionResult<string> GetComFrom(string nome,[FromServices]IMeuService service)
         {
@@ -31,7 +31,7 @@ namespace Catalogo.Controllers
         {
             return service.BemVindo(nome);
         }
-                
+          */      
         //comentarios em xml
         /// <summary>
         /// Retorna os itens.
