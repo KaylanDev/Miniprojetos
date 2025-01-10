@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Catalogo.Validations;
 
 namespace Catalogo.Models;
 
@@ -11,6 +12,7 @@ public class Produto
 
     [Required]
     [StringLength(80,MinimumLength = 5 ,ErrorMessage ="Digite um nome valido!")]
+    [PrimeiraLetraMaiusculaAttribute]
     public string? Nome { get; set; }
 
     [Required]
