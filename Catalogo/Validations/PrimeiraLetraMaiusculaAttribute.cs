@@ -4,6 +4,7 @@ namespace Catalogo.Validations
 {
     public class PrimeiraLetraMaiusculaAttribute : ValidationAttribute
     {
+        //das
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (value == null || string.IsNullOrEmpty(value.ToString())) {
